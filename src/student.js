@@ -1,12 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { Row, Col, Form, Button, Container, Card } from 'react-bootstrap';
+import { Row, Col, Form, Button, Container, Card, Modal } from 'react-bootstrap';
 import axios from "axios";
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import ListGroup from 'react-bootstrap/ListGroup';
 const Students = () => {
+    const [show, setShow] = useState(false);
+
 
     const [name, setName] = useState("")
+    const [nameUpdate, setnameUpdate] = useState("")
     const [studenId, setStudenId] = useState("")
+    const [studenIdUpdate, setIdUpdate] = useState("")
+
     const [level, setLevel] = useState("")
     const [data, setData] = useState([])
     const getStudents = async () => {
@@ -19,8 +24,9 @@ const Students = () => {
 
 
     const handleShow = (data) => {
-        setName(data.name)
-        setStudenId(data.studentId)
+        setShow(true)
+        setnameUpdate(data.name)
+        setIdUpdate(data.studentId)
         setLevel(data.level)
     };
     const cancel = () => {
@@ -44,10 +50,14 @@ const Students = () => {
         await getStudents()
     }
 
+    const handleClose = () => {
+
+        setShow(false);
+    }
     const updateStudent = async () => {
 
-        const body = {name: name }
-        await axios.put(`http://localhost:4000/student/${studenId}`, body)
+        const body = { name: nameUpdate }
+        await axios.put(`http://localhost:4000/student/${studenIdUpdate}`, body)
             .then(res => {
                 if (res.status === 200) {
 
@@ -57,7 +67,11 @@ const Students = () => {
             })
 
         await getStudents()
+        handleClose()
     }
+
+
+
 
     const deleteStudent = async (id) => {
 
@@ -118,70 +132,88 @@ const Students = () => {
                                         </Col>
                                         <Col sm={3}>
                                             <Form.Group>
-                                                {
-                                                    studenId ? (
-                                                        <Button
-                                                            style={{ marginTop: '30px' }}
-                                                            variant="primary"
-                                                            onClick={() => updateStudent()}
-                                                        >แก้ไข</Button>
-                                                    ) : (
 
-                                                        <Button
-                                                            style={{ marginTop: '30px' }}
-                                                            variant="success"
-                                                            onClick={() => addStudent()}
-                                                        >เพิ่มข้อมูล</Button>
-                                                    )
-                                                }
 
                                                 <Button
                                                     style={{ marginTop: '30px' }}
-                                                    variant="danger"
-                                                    onClick={() => cancel()}
-                                                >ยกเลิก</Button>
-                                            </Form.Group>
+                                                    variant="success"
+                                                    onClick={() => addStudent()}
+                                                >เพิ่มข้อมูล</Button>
 
-                                        </Col>
-                                    </Row>
-                                </Container>
-                            </Form>
+                                            
 
-                            <Card.Body>
-                                <ListGroup variant="flush">
-                                    {
-                                        data.map(item => {
-                                            return (
-                                                <>
-                                                    <ListGroup.Item>
-                                                        <Row>
-                                                            <Col>ชื่อ : {item.name}</Col>
-                                                            <Col> รหัส : {item.studentId}   ปี - {item.level}</Col>
-                                                            <Col>
-                                                                <ButtonGroup aria-label="Basic example">
-                                                                    <Button variant="warning" onClick={() => handleShow(item)}>แก้ไข</Button>
-                                                                    <Button variant="danger" onClick={() => deleteStudent(item.studentId)}>ลบ</Button>
 
-                                                                </ButtonGroup>
-                                                            </Col>
 
-                                                        </Row>
+                                            <Button
+                                                style={{ marginTop: '30px' }}
+                                                variant="danger"
+                                                onClick={() => cancel()}
+                                            >ยกเลิก</Button>
 
-                                                    </ListGroup.Item>
-                                                </>
-                                            )
-                                        })
-                                    }
-                                </ListGroup>
+                                        </Form.Group>
 
-                            </Card.Body>
+                                    </Col>
+                                </Row>
+                            </Container>
+                        </Form>
 
-                        </Card>
-                    </Col>
+                        <Card.Body>
+                            <ListGroup variant="flush">
+                                {
+                                    data?.map(item => {
+                                        return (
+                                            <>
+                                                <ListGroup.Item>
+                                                    <Row>
+                                                        <Col>ชื่อ : {item.name}</Col>
+                                                        <Col> รหัส : {item.studentId}   <b> ปี - {item.level}</b> </Col>
+                                                        <Col>
+                                                            <ButtonGroup aria-label="Basic example">
+                                                                <Button variant="warning" onClick={() => handleShow(item)}>แก้ไข</Button>
+                                                                <Button variant="danger" onClick={() => deleteStudent(item.studentId)}>ลบ</Button>
 
-                </Row>
+                                                            </ButtonGroup>
+                                                        </Col>
 
-            </Container>
+                                                    </Row>
+
+                                                </ListGroup.Item>
+                                            </>
+                                        )
+                                    })
+                                }
+                            </ListGroup>
+
+                        </Card.Body>
+
+                    </Card>
+                </Col>
+
+            </Row>
+            <Modal show={show} onHide={handleClose} animation={false}>
+                <Modal.Header closeButton>
+                    <Modal.Title>แก้ไขข้อมูล</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>  <Col sm={12}   >
+                    <Form.Group>
+                        <Form.Label>ชื่อ-นามสกุล</Form.Label>
+                        <Form.Control
+                            placeholder="ชื่อ-นามสกุล"
+                            type="text"
+                            onChange={(e) => { setnameUpdate(e.target.value) }}
+                            value={nameUpdate} />
+                    </Form.Group>
+                </Col></Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => updateStudent()}>
+                        แก้ไข
+                    </Button>
+                    <Button variant="primary" onClick={handleClose}>
+                        ปืด
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+        </Container >
         </>
     )
 }

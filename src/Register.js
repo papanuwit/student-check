@@ -33,6 +33,17 @@ const Home = () => {
                                         <Col sm={12}
                                         >
                                             <Form.Group className="mb-2">
+                                            <Row>
+                                                    <Col sm={2}>
+                                                        <Form.Label>email</Form.Label>
+                                                    </Col>
+                                                    <Col sm={12}>
+                                                        <Form.Control
+                                                            placeholder="email"
+                                                            type="text" value={email}
+                                                            onChange={(e) => setEmail(e.target.value)} />
+                                                    </Col>
+                                                </Row>
                                                 <Row>
                                                     <Col sm={2}>
                                                         <Form.Label>name</Form.Label>
@@ -44,17 +55,7 @@ const Home = () => {
                                                             onChange={(e) => setName(e.target.value)} />
                                                     </Col>
                                                 </Row>
-                                                <Row>
-                                                    <Col sm={2}>
-                                                        <Form.Label>email</Form.Label>
-                                                    </Col>
-                                                    <Col sm={12}>
-                                                        <Form.Control
-                                                            placeholder="email"
-                                                            type="text" value={email}
-                                                            onChange={(e) => setEmail(e.target.value)} />
-                                                    </Col>
-                                                </Row>
+                                              
 
 
 
